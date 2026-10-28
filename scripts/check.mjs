@@ -29,7 +29,7 @@ const req=(body,headers={})=>new Request(origin+'/api/evolve',{method:'POST',hea
 const valid={image:'data:image/png;base64,aGVsbG8=',prompt:'我的火箭想去火星',subject:'小火箭',style:'doodle',strength:50};
 const env={DEEPSEEK_API_KEY:'test-only'};
 assert.equal((await worker.fetch(req(valid,{Origin:'https://other.test'}),{})).status,403);
-assert.equal((await worker.fetch(req(valid,{'oai-authenticated-user-id':''}),{})).status,401);
+assert.equal((await worker.fetch(req(valid,{'oai-authenticated-user-id':''}),{})).status,503);
 assert.equal((await worker.fetch(req(valid),{})).status,503);
 assert.equal((await worker.fetch(req({...valid,style:'bad'}),env)).status,400);
 assert.equal((await worker.fetch(req({...valid,strength:100}),env)).status,400);
@@ -51,3 +51,5 @@ try {
 assert.equal((await worker.fetch(new Request(origin+'/missing'),{})).status,404);
 assert.match(readFileSync(new URL('../LICENSE',import.meta.url),'utf8'),/Copyright \(c\) 2026 yang0/);
 console.log('PASS: 8 varied sketches and matching prompts; curve smoothing; enclosed-region coloring; script syntax; copyright; DeepSeek request format; secret-free status; auth/origin/input validation; schema validation and provider errors. All API responses mocked, no real API charges.');
+
+const options=await worker.fetch(new Request(origin+'/api/evolve',{method:'OPTIONS',headers:{Origin:'https://ziyufork.github.io'}}),{});assert.equal(options.status,204);assert.equal(options.headers.get('Access-Control-Allow-Origin'),'https://ziyufork.github.io');
